@@ -1,13 +1,13 @@
 <?php
-require_once 'config.php';
+// Start the session (ensure this is at the beginning)
+session_start();
 
-// Check if the user is not logged in, then display the Google login button
-if (!isset($_SESSION['user_token'])) {
-    $authUrl = $client->createAuthUrl();
-} else {
-    // Redirect to the welcome page if the user is already logged in
-    header("Location: profile_page.php");
-    die();
+// Create connection
+$conn = new mysqli('localhost', 'root', '', 'portfoliohub');
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 
 // Manual signup form submission
@@ -16,63 +16,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['e
     $email = $_POST['email'];
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    // Function to generate a 21-digit random number
-    function generateRandomToken() {
-        return bcpow('10', '20', 0); // 10^20
-    }
+    // Generate a unique 21-digit token
+    $token = generateUniqueToken($conn);
 
     // Check if the email is already registered
     $checkEmailSql = "SELECT * FROM users WHERE email = '{$email}'";
     $checkEmailResult = mysqli_query($conn, $checkEmailSql);
 
     if (!$checkEmailResult) {
-        echo "Error: " . mysqli_error($conn);
-        die();
+        logError("Error checking email: " . mysqli_error($conn));
     }
 
     if (mysqli_num_rows($checkEmailResult) > 0) {
-        echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@10'></script>";
-        echo "<script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Oops...',
-                    text: 'Email is already registered!',
-                }).then(function() {
-                    window.history.back();
+
+        // Display SweetAlert for success
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+        echo '<script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    Swal.fire({
+                        title: "Email is already registered!",
+                        text: "Error",
+                        icon: "error",
+                        confirmButtonText: "OK"
+                    }).then(() => {
+                        window.location.href = "signup_page.php"; // Redirect to the login page
+                    });
                 });
-            });
-        </script>";
-        die();
+             </script>';
+        exit();
     } else {
-        // Generate and check the uniqueness of the token
-        do {
-            $token = (string) generateRandomToken(); // Explicitly cast to string
-
-            $checkTokenSql = "SELECT * FROM users WHERE token = '{$token}'";
-            $checkTokenResult = mysqli_query($conn, $checkTokenSql);
-
-            if (!$checkTokenResult) {
-                echo "Error: " . mysqli_error($conn);
-                die();
-            }
-
-            // If the token already exists, regenerate a new one and retry
-        } while (mysqli_num_rows($checkTokenResult) > 0);
-
         // Insert new user into the database with verifiedEmail set to '1' and the generated token
         $insertUserSql = "INSERT INTO users (username, email, password, verifiedEmail, token) VALUES ('{$username}', '{$email}', '{$password}', '1', '{$token}')";
+
         $insertUserResult = mysqli_query($conn, $insertUserSql);
 
         if (!$insertUserResult) {
-            echo "Error: " . mysqli_error($conn);
-            die();
+            logError("Error inserting user: " . mysqli_error($conn));
         }
 
         // Set the user token and redirect to the welcome page
         $_SESSION['user_token'] = $token;
-        header("Location: profile_page.php");
-        die();
+
+          // Display SweetAlert for success
+          echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+          echo '<script>
+                  document.addEventListener("DOMContentLoaded", function () {
+                      Swal.fire({
+                          title: "Success!",
+                          text: "Signup successful!",
+                          icon: "success",
+                          confirmButtonText: "OK"
+                      }).then(() => {
+                          window.location.href = "profile_page.php"; // Redirect to the login page
+                      });
+                  });
+               </script>';
+          exit();
     }
+}
+
+function logError($message) {
+    echo "<script>
+            console.error('$message');
+          </script>";
+}
+
+function generateUniqueToken($conn) {
+    $token = '';
+    do {
+        $token = '';
+        for ($i = 1; $i <= 21; $i++) {
+            $token .= rand(0, 9);
+        }
+    } while (tokenExistsInDatabase($conn, $token));
+
+    return $token;
+}
+
+function tokenExistsInDatabase($conn, $token) {
+    $checkTokenSql = "SELECT * FROM users WHERE token = '{$token}'";
+    $checkTokenResult = mysqli_query($conn, $checkTokenSql);
+
+    if (!$checkTokenResult) {
+        logError("Error checking token: " . mysqli_error($conn));
+    }
+
+    return mysqli_num_rows($checkTokenResult) > 0;
 }
 ?>

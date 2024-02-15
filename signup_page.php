@@ -1,6 +1,4 @@
-<?php
-require_once 'config.php';
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,15 +24,6 @@ require_once 'config.php';
                 <input type="submit" value="Sign Up">
             </form>
 
-            <?php
-            // Check if the user is not logged in, then display the Google login button
-            if (!isset($_SESSION['user_token'])):
-            ?>
-                <a class='google-btn' href='<?php echo $client->createAuthUrl(); ?>'>
-                    <span class='google-icon'></span>
-                    Google Signup
-                </a>
-            <?php endif; ?>
     </div>
 </div>
 
