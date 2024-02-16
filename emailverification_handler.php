@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
                     showConfirmButton: false,
                     timer: 1000
                 }).then(() => {
-                    window.location.href = 'emailverification.php.php';
+                    window.location.href = 'emailverification.php';
                 });
             });
         </script>";

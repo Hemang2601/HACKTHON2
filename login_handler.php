@@ -1,5 +1,14 @@
 <?php
-require_once 'config.php';
+
+session_start(); 
+
+// Create connection
+$conn = new mysqli('localhost', 'root', '', 'portfoliohub');
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
 
 // Redirect to the welcome page if the user is already logged in
 if (isset($_SESSION['user_token'])) {
@@ -40,21 +49,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     die("Error updating active status: " . mysqli_error($conn));
                 }
 
-                // Password matches, set the user token and email, and redirect to the welcome page
+                
                 $_SESSION['user_token'] = $user['token'];
                 $_SESSION['user_email'] = $user['email'];
                 header("Location: profile_page.php");
                 die();
             } else {
-                // Display a SweetAlert for already active status and go back in history
+                
                 showAlert('error', 'Account Already Active', 'Your account is already active.');
             }
         } else {
-            // Display a SweetAlert for invalid password and go back in history
+            
             showAlert('error', 'Invalid Password', 'Please check your password.');
         }
     } else {
-        // Display a SweetAlert for invalid email or invalid credentials and go back in history
+        
         showAlert('error', 'Invalid Credentials', 'Please check your email and password.');
     }
 }
@@ -73,4 +82,4 @@ function showAlert($icon, $title, $text) {
         });
     </script>";
 }
-?>
+

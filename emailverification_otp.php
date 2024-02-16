@@ -13,6 +13,12 @@ if ($conn->connect_error) {
 // Check if the email is in the session
 $email = isset($_SESSION['email']) ? $_SESSION['email'] : null;
 
+// If email is not found in the session, redirect to emailverification.php
+if (!$email) {
+    header("Location: emailverification.php");
+    exit(); // Ensure that script execution stops after redirection
+}
+
 // Display an error message and redirect if the email is not found
 if (!$email) {
     echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@10'></script>";
@@ -50,6 +56,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['otp'])) {
          $deleteStmt = mysqli_prepare($conn, $deleteSql);
          mysqli_stmt_bind_param($deleteStmt, "s", $enteredOTP);
          mysqli_stmt_execute($deleteStmt);
+
+         
         // Redirect or show a success message
         echo "<script src='https://cdn.jsdelivr.net/npm/sweetalert2@10'></script>";
         echo "<script>

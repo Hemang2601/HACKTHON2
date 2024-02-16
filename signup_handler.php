@@ -2,6 +2,15 @@
 // Start the session (ensure this is at the beginning)
 session_start();
 
+// Check if the email is in the session
+$email = isset($_SESSION['email']) ? $_SESSION['email'] : null;
+
+// If email is not found in the session, redirect to emailverification.php
+if (!$email) {
+    header("Location: emailverification.php");
+    exit(); 
+}
+
 // Create connection
 $conn = new mysqli('localhost', 'root', '', 'portfoliohub');
 
@@ -39,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['e
                         icon: "error",
                         confirmButtonText: "OK"
                     }).then(() => {
-                        window.location.href = "signup_page.php"; // Redirect to the login page
+                        window.location.href = "emailverification.php"; // Redirect to the login page
                     });
                 });
              </script>';
@@ -54,12 +63,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['e
             logError("Error inserting user: " . mysqli_error($conn));
         }
 
-        // Set the user token and redirect to the welcome page
-        $_SESSION['user_token'] = $token;
+        // Destroy the session and unset the user_token session variable
+        session_destroy();
+        unset($_SESSION['email']);
 
-          // Display SweetAlert for success
-          echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
-          echo '<script>
+        // Display SweetAlert for success
+        echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+        echo '<script>
                   document.addEventListener("DOMContentLoaded", function () {
                       Swal.fire({
                           title: "Success!",
@@ -67,11 +77,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['username'], $_POST['e
                           icon: "success",
                           confirmButtonText: "OK"
                       }).then(() => {
-                          window.location.href = "profile_page.php"; // Redirect to the login page
+                          window.location.href = "index.php"; // Redirect to the login page
                       });
                   });
                </script>';
-          exit();
+        exit();
     }
 }
 

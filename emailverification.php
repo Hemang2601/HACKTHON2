@@ -13,8 +13,9 @@ require_once 'config.php';
 
 <div class="container">
     <div class="signup-box">
+    <h2>Signup</h2>
         <form class="signup-form" method="post" action="emailverification_handler.php">
-            <label for="email">Email:</label>
+            <label for="email">Email</label>
             <input type="email" id="email" name="email">
             <br>
             <input type="submit" value="Email Verification">

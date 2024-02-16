@@ -14,21 +14,32 @@ if (isset($_GET['code'])) {
     $google_account_info = $google_oauth->userinfo->get();
     $userinfo = [
         'email' => $google_account_info['email'],
-        'first_name' => $google_account_info['givenName'],
-        'last_name' => $google_account_info['familyName'],
         'full_name' => $google_account_info['name'],
         'picture' => $google_account_info['picture'],
         'verifiedEmail' => $google_account_info['verifiedEmail'],
         'token' => $google_account_info['id'],
     ];
 
-    // checking if user already exists in the database
+    // checking if the user already exists in the database
     $sql = "SELECT * FROM users WHERE email ='{$userinfo['email']}'";
     $result = mysqli_query($conn, $sql);
 
     if (!$result) {
-        echo "Error: " . mysqli_error($conn);
-        die();
+         // Show SweetAlert for successful signup
+         echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+         echo '<script>
+             document.addEventListener("DOMContentLoaded", function () {
+                 Swal.fire({
+                     title: "Signup Successful!",
+                     text: "You have successfully signed up.",
+                     icon: "success",
+                     confirmButtonText: "OK"
+                 }).then(() => {
+                     window.location.href = "index.php";
+                 });
+             });
+         </script>';
+         die();
     }
 
     if (mysqli_num_rows($result) === 0) {
@@ -36,13 +47,15 @@ if (isset($_GET['code'])) {
         $uppercaseUsername = strtoupper($userinfo['full_name']);
 
         // user does not exist
-        $sql = "INSERT INTO users (email, first_name, last_name, username, picture, verifiedEmail, token, active_status) VALUES ('{$userinfo['email']}', '{$userinfo['first_name']}', '{$userinfo['last_name']}','{$uppercaseUsername}', '{$userinfo['picture']}', '{$userinfo['verifiedEmail']}', '{$userinfo['token']}', 1)";
+        $sql = "INSERT INTO users (email, username, picture, verifiedEmail, token, active_status) VALUES ('{$userinfo['email']}','{$uppercaseUsername}', '{$userinfo['picture']}', '{$userinfo['verifiedEmail']}', '{$userinfo['token']}', 0)";
         $result = mysqli_query($conn, $sql);
 
         if (!$result) {
             echo "Error: " . mysqli_error($conn);
             die();
         }
+
+       
     } else {
         // user exists, update active_status to 1
         $sql = "UPDATE users SET active_status = 1 WHERE email = '{$userinfo['email']}'";
@@ -72,8 +85,24 @@ if (isset($_GET['code'])) {
         header("Location: password_setup.php");
         die();
     }
-    // Redirect to the profile page
-    header("Location: profile_page.php");
+
+    session_destroy();
+    unset($_SESSION['user_token']);
+
+    // Show SweetAlert for successful logout and redirect to the index page
+    echo '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>';
+    echo '<script>
+        document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+                title: "Already Email Registered",
+                text: "You are already registered. Redirecting to login...",
+                icon: "error",
+                confirmButtonText: "OK"
+            }).then(() => {
+                window.location.href = "index.php";
+            });
+        });
+    </script>';
     die();
 }
 ?>

@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         title: 'Password Set Successfully',
                         text: 'You can now log in with your password.',
                     }).then(function() {
-                        window.location.href = 'profile_page.php';
+                        window.location.href = 'index.php';
                     });
                 });
               </script>";

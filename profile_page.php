@@ -1,6 +1,6 @@
 <?php
 require_once 'config.php';
-require_once 'store_google_data.php';
+
 
 // Check if user is authenticated
 if (!isset($_SESSION['user_token'])) {
