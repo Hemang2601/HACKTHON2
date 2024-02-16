@@ -1,0 +1,14 @@
+-For Signup with Google
+index.php->emailverification.php->store_google_data.php->password_setup.php->password_setup_hanlder.php->index.php 
+
+-For Signup with Manual 
+index.php->emailverification.php->emailverification_handler.php->emailverification_otp.php->signup_page.php->signup_handler.php->index.php
+
+-For Forget password
+index.php->forgot_password.php->rest_handler.php->verify_otp.php->update_password.php->index.php
+
+-For Login 
+index.php->login_handler.php->profile_page.php
+
+-For Logout
+logout.php

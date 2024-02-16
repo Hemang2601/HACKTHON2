@@ -1,6 +1,12 @@
 <?php
 require_once 'config.php';
 
+// Check if user is authenticated
+if (!isset($_SESSION['user_token'])) {
+    header("Location: index.php");
+    die();
+}
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve the password from the form
