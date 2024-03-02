@@ -1,0 +1,78 @@
+
+/* Add more styling as needed */
+.carousel-inner img {
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.announcement {
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.announcement-text {
+    flex-grow: 1;
+}
+
+#placement-section {
+    margin-top: 40px;
+}
+.about-section {
+    background-color: #f8f9fa; /* Light gray background */
+    padding: 40px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.about-section h2 {
+    color: #007bff; /* Blue color for headings */
+    font-weight: bold;
+}
+
+.about-section p {
+    color: #495057; /* Dark gray color for text */
+}
+
+.cta-button {
+    background-color: #28a745; /* Green color for the button */
+    color: #fff; /* White color for text */
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.cta-button:hover {
+    background-color: #218838; /* Darker green color on hover */
+}
+
+.card {
+    border: none;
+    background-color: #f8f9fa; /* Light gray background */
+    border-radius: 10px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    color: #007bff; /* Blue color for card title */
+    font-weight: bold;
+}
+
+.list-unstyled li {
+    margin-bottom: 10px;
+}
+
+.list-unstyled i {
+    margin-right: 10px;
+}
